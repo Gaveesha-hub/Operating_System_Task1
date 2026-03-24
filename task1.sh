@@ -14,3 +14,10 @@ show_system_usage() {
     top -b -n1 | head -5
     log_action "Viewed CPU and memory usage"
 }
+
+# Function: Top 10 memory consuming processes
+top_processes() {
+    echo "---- Top 10 Memory Consuming Processes ----"
+    ps -eo pid,user,%cpu,%mem,comm --sort=-%mem | head -11
+    log_action "Viewed top 10 memory consuming processes"
+}
