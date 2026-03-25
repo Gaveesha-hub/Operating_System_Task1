@@ -64,3 +64,55 @@ disk_usage() {
         echo "❌ Directory not found"
     fi
 }
+
+# Function: Log archiving
+archive_logs() {
+
+    read -p "Enter directory to search log files: " search_dir
+
+    if [ ! -d "$search_dir" ]; then
+        echo "❌ Directory not found"
+        return
+    fi
+
+    # Create ArchiveLogs if not exists
+    if [ ! -d "$ARCHIVE_DIR" ]; then
+        mkdir "$ARCHIVE_DIR"
+        log_action "Created ArchiveLogs directory"
+    fi
+
+    echo "🔍 Searching for log files >50MB in $search_dir..."
+
+    found=false
+
+    while IFS= read -r file
+    do
+        found=true
+
+        timestamp=$(date '+%Y%m%d_%H%M%S')
+        filename=$(basename "$file")
+
+        gzip -c "$file" > "$ARCHIVE_DIR/${filename}_${timestamp}.gz"
+
+        if [ $? -eq 0 ]; then
+            echo "✅ Archived: $file"
+            log_action "Archived $file"
+        else
+            echo "❌ Failed to archive: $file"
+            log_action "Failed to archive $file"
+        fi
+
+    done < <(find "$search_dir" -type f -name "*.log" -size +50M 2>/dev/null)
+
+    if [ "$found" = false ]; then
+        echo "⚠ No log files larger than 50MB found."
+    fi
+
+    # Check ArchiveLogs size
+    size=$(du -sm "$ARCHIVE_DIR" | cut -f1)
+
+    if [ "$size" -gt 1024 ]; then
+        echo "⚠ WARNING: ArchiveLogs exceeds 1GB!"
+        log_action "Warning: ArchiveLogs exceeded 1GB"
+    fi
+}
