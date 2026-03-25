@@ -130,3 +130,36 @@ exit_system() {
         echo "Returning to menu..."
     fi
 }
+
+
+# Main menu loop
+
+while true
+do
+    echo "=============================="
+    echo " University Data Centre System"
+    echo "=============================="
+    echo "1. Show CPU & Memory Usage"
+    echo "2. Show Top 10 Processes"
+    echo "3. Terminate a Process"
+    echo "4. Check Disk Usage"
+    echo "5. Archive Large Log Files"
+    echo "6. Bye (Exit)"
+    echo "=============================="
+
+    read -p "Enter your choice: " choice
+
+    case $choice in
+        1) show_system_usage ;;
+        2) top_processes ;;
+        3) kill_process ;;
+        4) disk_usage ;;
+        5) archive_logs ;;
+        6) exit_system ;;
+        *) echo "❌ Invalid option. Please try again."
+           log_action "Invalid menu input: $choice"
+           ;;
+    esac
+
+    echo ""
+done
