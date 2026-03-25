@@ -116,3 +116,17 @@ archive_logs() {
         log_action "Warning: ArchiveLogs exceeded 1GB"
     fi
 }
+
+
+# Exit function
+
+exit_system() {
+    read -p "Are you sure you want to exit? (Y/N): " confirm
+    if [[ "$confirm" == "Y" || "$confirm" == "y" ]]; then
+        log_action "Exited system"
+        echo "Bye!"
+        exit 0
+    else
+        echo "Returning to menu..."
+    fi
+}
